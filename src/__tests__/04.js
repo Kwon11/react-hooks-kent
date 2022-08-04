@@ -43,10 +43,8 @@ test('can play a game of tic tac toe', async () => {
 
   // game is over so no more moves may be played
   expect(screen.getByText('Winner: X')).toBeInTheDocument()
+  await userEvent.click(s4)
   expect(s4).toHaveTextContent('')
-  // console.log('s4 content before click is', s4);
-  // await userEvent.click(s4)
-  // expect(s4).toHaveTextContent('')
 })
 
 test('does not change square value when it is clicked multiple times', async () => {

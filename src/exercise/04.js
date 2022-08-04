@@ -4,10 +4,11 @@
 import React, { useState } from 'react'
 
 function Board() {
-  // 🐨 squares is the state for this component. Add useState for squares
   const generateInitialSquares = () => Array(9).fill(null);
   const [squares, setSquares] = useState(generateInitialSquares);
-  const [nextValue, setNextValue] = useState(calculateNextValue(squares)); // does this need to be state? todochan
+  const [nextValue, setNextValue] = useState(calculateNextValue(squares));
+        // RFCIPU
+        // does this need to be state? todochan
         // and i really dont want to call generateInitialSquares twice for the same array, but if i do it once imperitively, it will be created on every render
         // what happens if I set it to "squares" here?
   const [gameWon, setGameWon] = useState(false);
@@ -27,7 +28,7 @@ function Board() {
     newSquares[square] = nextValue;
     setSquares(newSquares);
     setGameWon(calculateWinner(newSquares));
-    setNextValue(calculateNextValue(newSquares)); // TODOCHAN
+    setNextValue(calculateNextValue(newSquares)); // RFCIPU this can't be the way, when gamewon and nextvalue are downwind of the squarestate at all times
   }
 
   function restart() {
