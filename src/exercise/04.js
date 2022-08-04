@@ -1,41 +1,39 @@
 // useState: tic tac toe
 // http://localhost:3000/isolated/exercise/04.js
 
-import * as React from 'react'
+import React, { useState } from 'react'
 
 function Board() {
   // 🐨 squares is the state for this component. Add useState for squares
-  const squares = Array(9).fill(null)
+  const generateInitialSquares = () => Array(9).fill(null);
+  const [squares, setSquares] = useState(generateInitialSquares);
+  const [nextValue, setNextValue] = useState(calculateNextValue(squares)); // does this need to be state? todochan
+        // and i really dont want to call generateInitialSquares twice for the same array, but if i do it once imperitively, it will be created on every render
+        // what happens if I set it to "squares" here?
+  const [gameWon, setGameWon] = useState(false);
+  const [errorState, setErrorState] = useState('');
 
-  // 🐨 We'll need the following bits of derived state:
-  // - nextValue ('X' or 'O')
-  // - winner ('X', 'O', or null)
-  // - status (`Winner: ${winner}`, `Scratch: Cat's game`, or `Next player: ${nextValue}`)
-  // 💰 I've written the calculations for you! So you can use my utilities
-  // below to create these variables
-
-  // This is the function your square click handler will call. `square` should
-  // be an index. So if they click the center square, this will be `4`.
   function selectSquare(square) {
-    // 🐨 first, if there's already winner or there's already a value at the
-    // given square index (like someone clicked a square that's already been
-    // clicked), then return early so we don't make any state changes
-    //
-    // 🦉 It's typically a bad idea to mutate or directly change state in React.
-    // Doing so can lead to subtle bugs that can easily slip into production.
-    //
-    // 🐨 make a copy of the squares array
-    // 💰 `[...squares]` will do it!)
-    //
-    // 🐨 set the value of the square that was selected
-    // 💰 `squaresCopy[square] = nextValue`
-    //
-    // 🐨 set the squares to your copy
+    if (squares[square] !== null) {
+      setErrorState('Tried to select an occupied square idiot!');
+      return;
+    }
+    if (gameWon) {
+      setErrorState('You cant keep playing after the game is over idiot!');
+      return;
+    }
+    setErrorState(null);
+    const newSquares = [...squares];
+    newSquares[square] = nextValue;
+    setSquares(newSquares);
+    setGameWon(calculateWinner(newSquares));
+    setNextValue(calculateNextValue(newSquares)); // TODOCHAN
   }
 
   function restart() {
-    // 🐨 reset the squares
-    // 💰 `Array(9).fill(null)` will do it!
+    setSquares(generateInitialSquares());
+    setNextValue(calculateNextValue(generateInitialSquares()));
+    setGameWon(false);
   }
 
   function renderSquare(i) {
@@ -47,9 +45,8 @@ function Board() {
   }
 
   return (
-    <div>
-      {/* 🐨 put the status in the div below */}
-      <div className="status">STATUS</div>
+    <div style={{'justifyContent': 'center', alignItems: 'center', display: 'flex', flexDirection: 'column'}}>
+      <div className="status">{errorState ? errorState : calculateStatus(gameWon, squares, nextValue)}</div>
       <div className="board-row">
         {renderSquare(0)}
         {renderSquare(1)}

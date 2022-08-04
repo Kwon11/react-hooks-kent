@@ -3,18 +3,23 @@
 
 import * as React from 'react'
 
-function Greeting({initialName = ''}) {
-  // 🐨 initialize the state to the value from localStorage
-  // 💰 window.localStorage.getItem('name') ?? initialName
-  const [name, setName] = React.useState(initialName)
+const useLocalStorageState = (storageKey, initialValue) => {
+  const [stateValue, setStorageKey] = React.useState(window.localStorage.getItem(storageKey) ?? initialValue);
+  return [stateValue, setStorageKey];
+};
 
-  // 🐨 Here's where you'll use `React.useEffect`.
-  // The callback should set the `name` in localStorage.
-  // 💰 window.localStorage.setItem('name', name)
+function Greeting({initialName = ''}) {
+  const [name, setName] = useLocalStorageState('name', initialName);
 
   function handleChange(event) {
     setName(event.target.value)
   }
+
+  React.useEffect(() => {
+    // everytime we rerender, I want to set the name in localstorage
+    window.localStorage.setItem('name', name);
+  }, [name]);
+
   return (
     <div>
       <form>
@@ -27,7 +32,7 @@ function Greeting({initialName = ''}) {
 }
 
 function App() {
-  return <Greeting />
+  return <Greeting initialName='poop'/>
 }
 
 export default App
